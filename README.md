@@ -32,112 +32,120 @@ Create a HTML file to implement form based input and output.
 Publish the website in the given URL.
 
 ## PROGRAM :
+## math.py
 ```
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lamp Power Calculator</title>
-  <style>
-    body {
-      font-family: "Poppins", sans-serif;
-      background: linear-gradient(135deg, #6a11cb, #2575fc);
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-    }
-    .container {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 30px 40px;
-      border-radius: 20px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-      width: 320px;
-      text-align: center;
-    }
-    h1 {
-      font-size: 1.6em;
-      margin-bottom: 15px;
-    }
-    label {
-      display: block;
-      margin: 10px 0 5px;
-      font-weight: bold;
-    }
-    input {
-      width: 100%;
-      padding: 8px;
-      border: none;
-      border-radius: 5px;
-      text-align: center;
-      font-size: 1em;
-    }
-    button {
-      margin-top: 20px;
-      padding: 10px 20px;
-      background-color: #ffcb05;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 1em;
-      color: #333;
-      transition: 0.3s;
-    }
-    button:hover {
-      background-color: #ffd84d;
-    }
-    #result {
-      margin-top: 20px;
-      font-size: 1.2em;
-      font-weight: bold;
-    }
-  </style>
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+<title>Area of Surface</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<style type="text/css">
+body {
+    background-color: #00ff11;
+}
+.edge {
+    width: 100%;
+    padding-top: 250px;
+    text-align: center;
+}
+.box {
+    display: inline-block;
+    border: thick dashed #ffffff;
+    width: 500px;
+    min-height: 300px;
+    font-size: 20px;
+    background-color: rgb(23, 53, 222);
+}
+.formelt {
+    color: rgb(9, 10, 11);
+    text-align: center;
+    margin-top: 7px;
+    margin-bottom: 6px;
+}
+h1 {
+    color: rgb(227, 176, 11);
+    padding-top: 20px;
+}
+
+</style>
 </head>
 <body>
-
-  <div class="container">
-    <h1>💡 Lamp Power Calculator</h1>
-
-    <label for="current">Current (I) in Amperes:</label>
-    <input type="number" id="current" placeholder="Enter current (I)" step="any">
-
-    <label for="resistance">Resistance (R) in Ohms:</label>
-    <input type="number" id="resistance" placeholder="Enter resistance (R)" step="any">
-
-    <button onclick="calculatePower()">Calculate Power</button>
-
-    <div id="result"></div>
-  </div>
-
-  <script>
-    function calculatePower() {
-      const I = parseFloat(document.getElementById("current").value);
-      const R = parseFloat(document.getElementById("resistance").value);
-      const resultDiv = document.getElementById("result");
-
-      if (isNaN(I) || isNaN(R)) {
-        resultDiv.innerHTML = "⚠️ Please enter both Current and Resistance values.";
-        return;
-      }
-
-      const P = I * I * R;
-      resultDiv.innerHTML = `🔹 Power (P) = ${P.toFixed(2)} watts`;
-    }
-  </script>
-
+<div class="edge">
+    <div class="box">
+        <h1>Surface area of a Right Cylinder</h1>
+   <form method="POST">
+            {% csrf_token %}
+            <div class="formelt">
+                Radius: <input type="text" name="radius" value="{{r}}">m<br/>
+            </div>
+            <div class="formelt">
+                Height: <input type="text" name="height" value="{{h}}">m<br/>
+            </div>
+            <div class="formelt">
+                <input type="submit" value="Calculate"><br/>
+            </div>
+            <div class="formelt">
+                Area: <input type="text" name="area" value="{{area}}">m<sup>2</sup><br/>
+            </div>
+        </form>
+    </div>
+</div>
 </body>
 </html>
-```
 
+
+```
+## views.py
+```
+from django.shortcuts import render
+
+def surfacearea(request):
+    context = {}
+    context['area'] = "0"
+    context['r'] = "0"
+    context['h'] = "0"
+    
+    if request.method == 'POST':
+        print("POST method is used")
+        
+        print('request.POST:', request.POST)
+        
+        r = request.POST.get('radius', '0') 
+        h = request.POST.get('height', '0') 
+        print('radius =', r)
+        print('height =', h)
+        
+        area = 2 * 3.14 * int(r) * int(h) + 2*3.14*int(r)*int(r)
+        context['area'] = area
+        context['r'] = r
+        context['h'] = h
+        print('Area =', area)
+    
+    return render(request, 'mathapp/math.html', context)
+
+
+```
+## urls.py
+```
+from django.contrib import admin
+from django.urls import path
+from mathapp import views
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('areaofsurface/',views.surfacearea,name="areaofsurface"),
+    path('',views.surfacearea,name="areaofsurfaceroot")
+]
+
+```
 ## SERVER SIDE PROCESSING:
+<img width="1472" height="496" alt="image" src="https://github.com/user-attachments/assets/63ea3dc4-ac7c-437b-a476-70b92c4e86f6" />
 
 
 ## HOMEPAGE:
-<img width="1541" height="670" alt="image" src="https://github.com/user-attachments/assets/766f9876-f149-41f4-99b1-77e7ba6ab4d8" />
+<img width="1392" height="865" alt="image" src="https://github.com/user-attachments/assets/6786d023-6508-4258-acf9-6f46844bb6e2" />
+
 
 
 ## RESULT:
